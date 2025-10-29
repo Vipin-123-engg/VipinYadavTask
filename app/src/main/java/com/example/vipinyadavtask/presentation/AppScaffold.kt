@@ -1,0 +1,61 @@
+package com.example.vipinyadavtask.presentation
+
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.statusBars
+import androidx.compose.foundation.layout.windowInsetsPadding
+import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.painterResource
+import androidx.navigation.NavController
+import com.example.vipinyadavtask.R
+import androidx.compose.material3.TabRow
+import androidx.compose.material3.Tab
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun AppScaffold(navController: NavController, content: @Composable () -> Unit) {
+    var selectedIndex by remember { mutableStateOf(0) }
+
+    Scaffold(
+        modifier = Modifier.fillMaxSize(),
+        topBar = {
+            TopAppBar(
+                title = { Text("Portfolio") },
+                actions = {
+                    IconButton(onClick = { /* search */ }) {
+                        Icon(painterResource(id = R.drawable.ic_launcher_foreground), contentDescription = null, tint = Color.Unspecified)
+                    }
+                },
+                colors = TopAppBarDefaults.topAppBarColors(containerColor = MaterialTheme.colorScheme.primary)
+            )
+        }
+    ) { innerPadding ->
+        androidx.compose.foundation.layout.Column(modifier = Modifier
+            .fillMaxSize()
+            .windowInsetsPadding(WindowInsets.statusBars)
+            .padding(innerPadding)) {
+            TabRow(selectedTabIndex = selectedIndex) {
+                Tab(selected = selectedIndex == 0, onClick = { selectedIndex = 0; navController.navigate("holdings") }) { Text("HOLDINGS") }
+                Tab(selected = selectedIndex == 1, onClick = { selectedIndex = 1; navController.navigate("positions") }) { Text("POSITIONS") }
+            }
+            content()
+        }
+    }
+}
+
+
