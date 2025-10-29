@@ -2,10 +2,10 @@ package com.example.vipinyadavtask.data.remote
 
 import com.example.vipinyadavtask.domain.model.Holding
 
-class RemoteDataSource(
+open class RemoteDataSource(
     private val api: HoldingsApi
 ) {
-    suspend fun fetchHoldings(): List<Holding> {
+    open suspend fun fetchHoldings(): List<Holding> {
         val response = api.getHoldings()
         return response.data.userHolding.map { dto ->
             Holding(

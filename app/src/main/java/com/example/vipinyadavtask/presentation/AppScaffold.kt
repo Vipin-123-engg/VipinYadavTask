@@ -1,5 +1,6 @@
 package com.example.vipinyadavtask.presentation
 
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -25,6 +26,10 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.AccountCircle
+import androidx.compose.material.icons.filled.Search
+import androidx.compose.ui.Alignment
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -35,10 +40,15 @@ fun AppScaffold(navController: NavController, content: @Composable () -> Unit) {
         modifier = Modifier.fillMaxSize(),
         topBar = {
             TopAppBar(
-                title = { Text("Portfolio") },
+                title = { Row(verticalAlignment = Alignment.CenterVertically) {
+                    IconButton(onClick = { /* search */ }) {
+                        Icon(Icons.Default.AccountCircle, contentDescription = "Search", tint = Color.White)
+                    }
+                    Text("Portfolio", color = Color.White)
+                } },
                 actions = {
                     IconButton(onClick = { /* search */ }) {
-                        Icon(painterResource(id = R.drawable.ic_launcher_foreground), contentDescription = null, tint = Color.Unspecified)
+                        Icon(Icons.Default.Search, contentDescription = "Search", tint = Color.White)
                     }
                 },
                 colors = TopAppBarDefaults.topAppBarColors(containerColor = MaterialTheme.colorScheme.primary)

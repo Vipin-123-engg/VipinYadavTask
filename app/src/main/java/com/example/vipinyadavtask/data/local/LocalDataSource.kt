@@ -4,12 +4,12 @@ import com.example.vipinyadavtask.data.local.db.HoldingEntity
 import com.example.vipinyadavtask.data.local.db.HoldingsDao
 import com.example.vipinyadavtask.domain.model.Holding
 
-class LocalDataSource(
+open class LocalDataSource(
     private val dao: HoldingsDao
 ) {
-    suspend fun getHoldings(): List<Holding> = dao.getAll().map { it.toDomain() }
+    open suspend fun getHoldings(): List<Holding> = dao.getAll().map { it.toDomain() }
 
-    suspend fun replaceHoldings(items: List<Holding>) {
+    open suspend fun replaceHoldings(items: List<Holding>) {
         val entities = items.map { it.toEntity() }
         dao.clear()
         dao.insertAll(entities)

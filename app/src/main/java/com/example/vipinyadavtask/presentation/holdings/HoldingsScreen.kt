@@ -1,6 +1,7 @@
 package com.example.vipinyadavtask.presentation.holdings
 
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.expandVertically
@@ -51,6 +52,8 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material.icons.filled.KeyboardArrowUp
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import kotlin.math.abs
 
 //@Preview(showSystemUi = true, showBackground = true)
 @Composable
@@ -107,7 +110,7 @@ private fun HoldingRow(holding: Holding) {
                 Text("LTP: ₹ ${holding.ltp}", style = MaterialTheme.typography.bodyMedium)
                 val pnl = PortfolioCalculator.perHoldingPnl(holding)
                 val color = if (pnl >= 0) Color(0xFF0A8754) else Color(0xFFB00020)
-                Text("P&L: ₹ ${"%.2f".format(pnl)}", color = color)
+                Text("P&L: ${formatCurrency(pnl)}", color = color)
             }
         }
     }
@@ -128,40 +131,48 @@ private fun SummaryCard(
             .fillMaxWidth()
             .background(MaterialTheme.colorScheme.surface)
             .padding(bottom = 8.dp)
-            .clickable { onToggle() }
+            .animateContentSize()
     ) {
         Column(modifier = Modifier.padding(16.dp)) {
-            Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween, verticalAlignment = Alignment.CenterVertically) {
+            // Details expand ABOVE the header
+            AnimatedVisibility(visible = expanded, enter = expandVertically(), exit = shrinkVertically()) {
+                Column(modifier = Modifier.fillMaxWidth()) {
+                    SummaryRow("Current value*", currentValue)
+                    SummaryRow("Total investment*", totalInvestment)
+                    SummaryRow("Today's PNL*", todaysPnl, valueColor = if (todaysPnl >= 0) Color(0xFF0A8754) else Color(0xFFB00020))
+                    Spacer(Modifier.height(8.dp))
+                }
+            }
 
-                Row {
-                    Text("Profit & Loss")
-                    // Rotating arrow icon
+            // Fixed header at the bottom of the card
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+
+                Row(horizontalArrangement = Arrangement.spacedBy(8.dp), verticalAlignment = Alignment.CenterVertically) {
+                    Text("Profit & Loss*")
+                    // Rotating arrow icon toggles expansion
                     val rotationAngle by animateFloatAsState(
                         targetValue = if (expanded) 180f else 0f,
                         animationSpec = tween(durationMillis = 300),
                         label = "arrow_rotation"
                     )
-
-                    Icon(
-                        imageVector = Icons.Default.KeyboardArrowDown,
-                        contentDescription = null,
-                        modifier = Modifier.rotate(rotationAngle),
-                        tint = Color.Gray
-                    )
+                    IconButton(onClick = onToggle) {
+                        Icon(
+                            imageVector = Icons.Default.KeyboardArrowDown,
+                            contentDescription = null,
+                            modifier = Modifier.rotate(rotationAngle),
+                            tint = Color.Gray
+                        )
+                    }
                 }
 
                 Row(horizontalArrangement = Arrangement.spacedBy(8.dp), verticalAlignment = Alignment.CenterVertically) {
                     val color = if (totalPnl >= 0) Color(0xFF0A8754) else Color(0xFFB00020)
-                    Text("₹ ${"%.2f".format(totalPnl)}", color = color, fontWeight = FontWeight.SemiBold)
-
-                }
-            }
-            AnimatedVisibility(visible = expanded, enter = expandVertically(), exit = shrinkVertically()) {
-                Column(modifier = Modifier.fillMaxWidth()) {
-                    Spacer(Modifier.height(12.dp))
-                    SummaryRow("Current value*", currentValue)
-                    SummaryRow("Total investment*", totalInvestment)
-                    SummaryRow("Today's Profit & Loss*", todaysPnl, valueColor = if (todaysPnl >= 0) Color(0xFF0A8754) else Color(0xFFB00020))
+                    val pct = if (totalInvestment > 0) (totalPnl / totalInvestment) * 100 else 0.0
+                    Text("${formatCurrency(totalPnl)} (${"%.2f".format(pct)}%)", color = color, fontWeight = FontWeight.SemiBold)
                 }
             }
         }
@@ -174,8 +185,14 @@ private fun SummaryRow(label: String, value: Double, valueColor: Color = Materia
         .fillMaxWidth()
         .padding(vertical = 6.dp), horizontalArrangement = Arrangement.SpaceBetween) {
         Text(label, color = Color.Gray)
-        Text("₹ ${"%.2f".format(value)}", color = valueColor)
+        Text(formatCurrency(value), color = valueColor)
     }
+}
+
+private fun formatCurrency(amount: Double): String {
+    val absValue = abs(amount)
+    val formatted = "₹ ${"%.2f".format(absValue)}"
+    return if (amount < 0) "-$formatted" else formatted
 }
 
 
