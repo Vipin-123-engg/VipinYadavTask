@@ -8,7 +8,6 @@ import com.example.vipinyadavtask.data.repository.HoldingsRepository
 import com.example.vipinyadavtask.data.repository.HoldingsRepositoryImpl
 import com.example.vipinyadavtask.domain.usecase.GetPortfolioUseCase
 import com.example.vipinyadavtask.utils.APIConstants.BASE_URL
-import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit

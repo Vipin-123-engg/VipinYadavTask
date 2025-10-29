@@ -7,7 +7,6 @@ import androidx.compose.animation.core.tween
 import androidx.compose.animation.expandVertically
 import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -17,42 +16,34 @@ import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.ime
-import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBars
-import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.ui.draw.rotate
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Divider
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.vipinyadavtask.domain.model.Holding
 import com.example.vipinyadavtask.domain.model.PortfolioCalculator
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.KeyboardArrowDown
-import androidx.compose.material.icons.filled.KeyboardArrowUp
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import kotlin.math.abs
 
 //@Preview(showSystemUi = true, showBackground = true)
@@ -61,21 +52,26 @@ fun HoldingsScreen(
     viewModel: HoldingsViewModel = viewModel()
 ) {
     val state by viewModel.state.collectAsState()
-    
+
     LaunchedEffect(Unit) {
         viewModel.dispatch(HoldingsIntent.Load)
     }
 
-    Box(modifier = Modifier
-        .fillMaxSize()
-        .windowInsetsPadding(WindowInsets.statusBars)) {
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .windowInsetsPadding(WindowInsets.statusBars)
+    ) {
         when {
             state.isLoading -> CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
-            state.error != null -> Text(state.error ?: "", color = Color.Red, modifier = Modifier.align(Alignment.Center))
+            state.error != null -> Text(
+                state.error ?: "",
+                color = Color.Red,
+                modifier = Modifier.align(Alignment.Center)
+            )
+
             else -> {
                 Column(modifier = Modifier.fillMaxSize()) {
-                    /*Text("Portfolio", style = MaterialTheme.typography.titleLarge, modifier = Modifier.padding(16.dp))
-                    Divider()*/
                     LazyColumn(modifier = Modifier.weight(1f)) {
                         items(state.holdings) { holding ->
                             HoldingRow(holding)
@@ -98,13 +94,23 @@ fun HoldingsScreen(
 
 @Composable
 private fun HoldingRow(holding: Holding) {
-    Column(modifier = Modifier
-        .fillMaxWidth()
-        .padding(horizontal = 16.dp, vertical = 12.dp)) {
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 16.dp, vertical = 12.dp)
+    ) {
         Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
             Column {
-                Text(holding.symbol, style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.SemiBold)
-                Text("NET QTY: ${holding.quantity}", style = MaterialTheme.typography.bodySmall, color = Color.Gray)
+                Text(
+                    holding.symbol,
+                    style = MaterialTheme.typography.titleMedium,
+                    fontWeight = FontWeight.SemiBold
+                )
+                Text(
+                    "NET QTY: ${holding.quantity}",
+                    style = MaterialTheme.typography.bodySmall,
+                    color = Color.Gray
+                )
             }
             Column(horizontalAlignment = Alignment.End) {
                 Text("LTP: ₹ ${holding.ltp}", style = MaterialTheme.typography.bodyMedium)
@@ -135,23 +141,34 @@ private fun SummaryCard(
     ) {
         Column(modifier = Modifier.padding(16.dp)) {
             // Details expand ABOVE the header
-            AnimatedVisibility(visible = expanded, enter = expandVertically(), exit = shrinkVertically()) {
+            AnimatedVisibility(
+                visible = expanded,
+                enter = expandVertically(),
+                exit = shrinkVertically()
+            ) {
                 Column(modifier = Modifier.fillMaxWidth()) {
                     SummaryRow("Current value*", currentValue)
                     SummaryRow("Total investment*", totalInvestment)
-                    SummaryRow("Today's PNL*", todaysPnl, valueColor = if (todaysPnl >= 0) Color(0xFF0A8754) else Color(0xFFB00020))
+                    SummaryRow(
+                        "Today's PNL*",
+                        todaysPnl,
+                        valueColor = if (todaysPnl >= 0) Color(0xFF0A8754) else Color(0xFFB00020)
+                    )
                     Spacer(Modifier.height(8.dp))
                 }
             }
 
+            Divider()
             // Fixed header at the bottom of the card
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
             ) {
-
-                Row(horizontalArrangement = Arrangement.spacedBy(8.dp), verticalAlignment = Alignment.CenterVertically) {
+                Row(
+                    horizontalArrangement = Arrangement.spacedBy(8.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
                     Text("Profit & Loss*")
                     // Rotating arrow icon toggles expansion
                     val rotationAngle by animateFloatAsState(
@@ -169,10 +186,17 @@ private fun SummaryCard(
                     }
                 }
 
-                Row(horizontalArrangement = Arrangement.spacedBy(8.dp), verticalAlignment = Alignment.CenterVertically) {
+                Row(
+                    horizontalArrangement = Arrangement.spacedBy(8.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
                     val color = if (totalPnl >= 0) Color(0xFF0A8754) else Color(0xFFB00020)
                     val pct = if (totalInvestment > 0) (totalPnl / totalInvestment) * 100 else 0.0
-                    Text("${formatCurrency(totalPnl)} (${"%.2f".format(pct)}%)", color = color, fontWeight = FontWeight.SemiBold)
+                    Text(
+                        "${formatCurrency(totalPnl)} (${"%.2f".format(pct)}%)",
+                        color = color,
+                        fontWeight = FontWeight.SemiBold
+                    )
                 }
             }
         }
@@ -180,10 +204,16 @@ private fun SummaryCard(
 }
 
 @Composable
-private fun SummaryRow(label: String, value: Double, valueColor: Color = MaterialTheme.colorScheme.onSurface) {
-    Row(modifier = Modifier
-        .fillMaxWidth()
-        .padding(vertical = 6.dp), horizontalArrangement = Arrangement.SpaceBetween) {
+private fun SummaryRow(
+    label: String,
+    value: Double,
+    valueColor: Color = MaterialTheme.colorScheme.onSurface
+) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(vertical = 6.dp), horizontalArrangement = Arrangement.SpaceBetween
+    ) {
         Text(label, color = Color.Gray)
         Text(formatCurrency(value), color = valueColor)
     }
