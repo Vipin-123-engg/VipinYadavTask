@@ -1,4 +1,4 @@
-package com.example.vipinyadavtask
+package com.example.vipinyadavtask.base
 
 import android.app.Application
 
@@ -13,5 +13,3 @@ class App : Application() {
             private set
     }
 }
-
-

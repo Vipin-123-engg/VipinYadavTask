@@ -41,8 +41,6 @@ android {
     }
 }
 
-// (removed) forcing JavaPoet — no longer needed after Hilt removal
-
 dependencies {
 
     implementation(libs.androidx.core.ktx)
@@ -56,7 +54,7 @@ dependencies {
     implementation(libs.serialization.json)
     implementation(libs.coroutines.core)
     implementation(libs.retrofit.core)
-    implementation(libs.retrofit.serialization)
+    implementation(libs.converter.gson)
     implementation(libs.okhttp.logging)
     implementation(libs.androidx.navigation.compose)
     implementation(libs.room.runtime)

@@ -4,8 +4,6 @@ import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import retrofit2.http.GET
 
-const val BASE_URL = "https://35dee773a9ec441e9f38d5fc249406ce.api.mockbin.io/"
-
 @Serializable
 data class ApiResponse(
     @SerialName("data") val data: HoldingsWrapper
